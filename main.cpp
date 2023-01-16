@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <iostream>
 #include <string>
 #include <unordered_map>
@@ -5,23 +6,17 @@
 
 struct Person
 {
-    std::string name;
     std::vector<double> items;
     double total;
     
-    Person() : name(""), total(0) {}
-    Person(const std::string& name_in, const double initial_total) : name(name_in), total(initial_total)
-{
-    items.push_back(initial_total);
-}
+    Person() : total(0) {}
+    Person(const double initial_total) : total(initial_total)
+    {
+        // don't need the items vector right now, but could be useful for verbose output
+        items.push_back(initial_total);
+    }
 
 };
-
-
-double convert_str_to_double(const std::string& s)
-{
-    return std::stod(s);
-}
 
 
 std::vector<std::string> split_string(const std::string& s, const std::string& delim)
@@ -53,7 +48,7 @@ void update_record(std::unordered_map<std::string, Person>& people, const std::v
         }
         else
         {
-            Person person{name, price_per};
+            Person person{price_per};
             people[name] = person;
         }
     }
@@ -61,6 +56,8 @@ void update_record(std::unordered_map<std::string, Person>& people, const std::v
 
 int main(int argc, char** argv)
 {
+    std::cout << std::setprecision(2) << std::fixed;
+
     unsigned int num_items;
     std::cout << "How many items were there: ";
     std::cin >> num_items;
@@ -69,7 +66,7 @@ int main(int argc, char** argv)
     std::unordered_map<std::string, Person> people;
     for (unsigned int i = 0; i < num_items; i++)
     {
-        std::string price;
+        double price; 
         std::cout << "How much did item " << i << " cost: ";
         std::cin >> price;
         
@@ -77,19 +74,17 @@ int main(int argc, char** argv)
         std::cout << "Who split item " << i << " (comma separated names): ";
         std::cin >> splitted;
         
-        double price_d = convert_str_to_double(price);
-        update_record(people, split_string(splitted, ","), price_d);
-        subtotal += price_d; 
+        update_record(people, split_string(splitted, ","), price);
+        subtotal += price; 
     }
     
-    std::string total; 
+    double total;
     std::cout << "What was the total after tip/tax: ";
     std::cin >> total;
-    double total_d = convert_str_to_double(total);
 
     for (const auto& [name, person] : people)
     {
-        std::cout << name << " owes " << total_d * (person.total / subtotal) << std::endl;
+        std::cout << name << " owes " << total * (person.total / subtotal) << std::endl;
     }
 
     return 0;
