@@ -48,8 +48,7 @@ void update_record(std::unordered_map<std::string, Person>& people, const std::v
         }
         else
         {
-            Person person{price_per};
-            people[name] = person;
+            people.emplace(name, price_per);
         }
     }
 }
